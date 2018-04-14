@@ -1,0 +1,11 @@
+<h1> Welcome {{ user.StudentName }} </h1>
+
+
+
+{% if message %} 
+    <h3> {{ message }} </h3>
+{% endif %}
+
+
+
+<a href = "{% url 'logout' %} "> <button id = "logout_button"> logout </button>
