@@ -1,0 +1,20 @@
+<h1> Welcome {{ admin.EmailId | capfirst }} </h1>
+
+
+
+{% if  not application_opened %}
+<a href = "{% url 'open_fees_application' %}"> <button id = "open_fees_application"> open fees application</button></a> 
+{% else %}
+<a href = "{% url 'send_fees_reminder' %}"> <button id = "send_fees_reminder"> send reminder for fee dates</button></a> 
+
+<a href = "{% url 'close_fees_application' %}"> <button id = "close_fees_application"> close fees application </button> </a>
+{% if  hall_ticket_available == "false" %}
+<a href = "{% url 'hall_ticket_printout' %}"><button id = "hall_ticket_printout"> hall ticket printout </button> </a>
+{% endif %}
+<a href = "{% url 'logout' %} "> <button id = "logout_button"> logout </button></a>
+{% endif %}
+{% if message %} 
+    <h3> {{ message }} </h3>
+{% endif %}
+    
+    

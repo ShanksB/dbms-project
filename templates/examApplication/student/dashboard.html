@@ -1,11 +1,23 @@
-<h1> Welcome {{ user.StudentName }} </h1>
+<h1> Welcome {{ user.StudentName | capfirst }} </h1>
 
 
+{% if application_opened %} 
+{% if not_paid %}
+<a href = "{% url 'pay_fees' %}"> <button id = "pay_fees"> pay fees </button></a>
+{% endif %}
+{% endif %}
+
+{% if reminder %}
+<h1> This is the remainder </h1>
+<p> {{ reminder }} </p>
+{% endif %}
 
 {% if message %} 
     <h3> {{ message }} </h3>
 {% endif %}
-
+{% if hall_ticket_available == 'true' %}
+<a href = "{% url 'download_hall_ticket' %}"> <button id = "pay_fees"> Download hallticket </button></a>
+{% endif %}
 
 
 <a href = "{% url 'logout' %} "> <button id = "logout_button"> logout </button>
