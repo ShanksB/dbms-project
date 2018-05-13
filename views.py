@@ -1,6 +1,13 @@
 from django.shortcuts import render
 # Create your views here.
 
+import os
+from datetime import *
+from io import BytesIO
+
+from django.http import HttpResponse
+from django.template.loader import get_template
+
 from .forms import RegisterStudentForm, LoginStudentForm, FeesApplicationForm
 
 from .router import *
@@ -10,6 +17,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .models import Student, Admin, FeesNotification, FeesPayment
 from django.utils.timezone import localtime, now
+
+from xhtml2pdf import pisa
 
 
 def homepage(request):
@@ -38,7 +47,7 @@ def login_student(request):
     if is_logged_in(request):
         return handle_already_logged_in_error(request)
 
-    message = 'none'
+    message = None
     if 'message' in request.session:
         message = request.session['message']
         request.session['message'] = None
@@ -61,7 +70,7 @@ def login_student(request):
     else:
         form = LoginStudentForm()
 
-    return render(request, 'examApplication/student/login.html', {'form': form, 'user': 'student', 'message': message})
+    return render(request, 'examApplication/student/login.html', {'form': form, 'user': 'student', 'message': message, 'error': error})
 
 
 @login_required(login_url='/login')
@@ -73,6 +82,7 @@ def dashboard(request):
         if 'message' in request.session:
             message = request.session['message']
             request.session['message'] = None
+
         application_opened = None
         not_paid = None
         hall_ticket_available = FeesNotification.objects.all().first().HallTicketAvailable
@@ -80,6 +90,11 @@ def dashboard(request):
             application_opened = True
             print(FeesNotification.objects.all().count() )
             not_paid = True
+
+        #print(FeesPayment.objects.get(StudentId = user))
+        if FeesPayment.objects.filter(StudentId = user).exists() :
+            not_paid = False
+
         return render(request, 'examApplication/student/dashboard.html', {"user": user, "hall_ticket_available": hall_ticket_available, error: "error", "application_opened": application_opened, "not_paid": not_paid})
     return handle_lacks_privileges_error(request)
 
@@ -88,8 +103,39 @@ def dashboard(request):
 @login_required(login_url='login')
 def download_hall_ticket(request):
     if request.user.profile.type == 'u':
-        return redirect('https://www.google.com/imgres?imgurl=https%3A%2F%2Fassets.change.org%2Fphotos%2F7%2Fwk%2Fbh%2FpUWkBhduwOtRAVV-800x450-noPad.jpg%3F1509858171&imgrefurl=https%3A%2F%2Fwww.change.org%2Fp%2Fwarner-brothers-make-wonder-woman-bisexual&docid=U5oOunR1QHNoJM&tbnid=KgAfpZTcFFK0KM%3A&vet=10ahUKEwiW5rDqr8vaAhVEsI8KHZ78BNQQMwjNASgEMAQ..i&w=799&h=449&client=ubuntu&bih=637&biw=1299&q=wonder%20woman&ved=0ahUKEwiW5rDqr8vaAhVEsI8KHZ78BNQQMwjNASgEMAQ&iact=mrc&uact=8')
+        student = Student.objects.get(EmailId = request.user.username)
+       # pdf = render_to_pdf('examApplication/hallticket.html',{'student':student} )
+       # return render(request, 'examApplication/hallticket.html', {'student':student} )
+        template  = get_template('examApplication/hallticket.html')
+        context = {
+            'student':student
+        }
+        html = template.render(context)
+        pdf = render_to_pdf('examApplication/hallticket.html', context)
+        return HttpResponse(pdf, content_type="application/pdf")
+       # return HttpResponse(pdf, content_type='application/pdf')
     return handle_lacks_privileges_error(request)
+
+def render_to_pdf(template_src, context_dict={}):
+     template = get_template(template_src)
+     html  = template.render(context_dict)
+     result = BytesIO()
+     pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
+     if not pdf.err:
+         return HttpResponse(result.getvalue(), content_type='application/pdf')
+     return None
+
+def link_callback(uri, rel):
+    print("called link with ", uri, " ", rel)
+    sUrl = settings.STATIC_URL  # Typically /static/
+    sRoot = settings.STATIC_ROOT  # Typically /home/userX/project_static/
+    path = None
+    if uri.startswith(sUrl):
+        path = os.path.join(sRoot, uri.replace(sUrl, ""))
+    if not os.path.isfile(path):
+        raise Exception('media URI must start with %s or %s' % (sUrl))
+    return path
+
 
 
 @login_required(login_url='home_page')

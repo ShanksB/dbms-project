@@ -1,6 +1,13 @@
+{% extends 'examApplication/base.html' %}
 
- <h1> Register</h1>
-    <form method="POST" class="post-form">{% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="save btn btn-default">Sign Up</button>
+{% load crispy_forms_tags %}
+{% block content %}
+<center> <h1> Register</h1></center>
+    <form method="POST" class="form">{% csrf_token %}
+         {{ form.as_p  }}
+        <center> 
+                <button type="submit" class="btn btn-primary">Sign Up</button>
+        </center>
+       
     </form>
+{% endblock %}

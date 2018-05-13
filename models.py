@@ -14,7 +14,7 @@ class Student(models.Model):
 	BRANCHES = (
 		('cse', 'ComputerScience'),
 		('mech', 'MechanicalEngineering'),
-		('ece', 'ElectronicsAndCommunication')	
+		('ece', 'ElectronicsAndCommunication')	#add more branches.... :)
 	)
 	EmailId = models.EmailField(unique = True)
 	Password = models.CharField(max_length = 25, validators = [MinLengthValidator(8)])

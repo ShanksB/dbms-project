@@ -1,10 +1,36 @@
-<h1> Welcome {{ user.StudentName | capfirst }} </h1>
+{% extends 'examApplication/base.html' %}
 
+
+{% block content %}
+
+<div class = "row">
+    <div class = "col-xs-6 text-left">
+            <h1> Welcome {{ user.StudentName | capfirst }}, </h1>
+    </div>
+    <div class = "col-xs-6 text-right">
+
+            <a href = "{% url 'logout' %} "> <button style="margin-top:15px" class = "btn btn-danger"><span class = "glyphicon glyphicon-log-out"></span> Logout </button>
+    </div>
+
+</div>
+
+<div class = "jumbotron">
+<div class = "row">
 
 {% if application_opened %} 
 {% if not_paid %}
-<a href = "{% url 'pay_fees' %}"> <button id = "pay_fees"> pay fees </button></a>
+<center><a href = "{% url 'pay_fees' %}"> <button class = "btn btn-primary btn-lg"  id = "pay_fees"> Pay Fees </button></a></center>
+{% else %}
+
+{% if hall_ticket_available == 'true'  %} 
+<center><a href = "{% url 'download_hall_ticket' %}"> <button class = "btn btn-primary btn-lg" id = "pay_fees"> Download Hallticket </button></a></center>
 {% endif %}
+{% endif %}
+
+{% else %}
+    <div class = "alert alert-danger">
+        Still no notification to pay fees
+    </div>
 {% endif %}
 
 {% if reminder %}
@@ -12,12 +38,13 @@
 <p> {{ reminder }} </p>
 {% endif %}
 
+
 {% if message %} 
-    <h3> {{ message }} </h3>
-{% endif %}
-{% if hall_ticket_available == 'true' %}
-<a href = "{% url 'download_hall_ticket' %}"> <button id = "pay_fees"> Download hallticket </button></a>
+    <div class = "alert alert-info">
+      <h3> {{ message }} </h3>
+    </div>   
 {% endif %}
 
-
-<a href = "{% url 'logout' %} "> <button id = "logout_button"> logout </button>
+</div>
+</div>
+{% endblock %}

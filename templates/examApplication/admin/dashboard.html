@@ -1,20 +1,35 @@
-<h1> Welcome {{ admin.EmailId | capfirst }} </h1>
+{% extends 'examApplication/base.html' %}
 
 
 
-{% if  not application_opened %}
-<a href = "{% url 'open_fees_application' %}"> <button id = "open_fees_application"> open fees application</button></a> 
+{% block content %}
+<div class = "row">
+        <div class = "col-xs-6 text-left">
+                <h1> Welcome Admin, </h1>
+        </div>
+        <div class = "col-xs-6 text-right">
+                <a href = "{% url 'logout' %} "> <button style="margin-top:15px"  class = "btn btn-danger" id = "logout_button"> Logout </button></a>
+        </div>   
+</div>
+
+<div class = "jumbotron">{% if  not application_opened %}
+    <div class = "row">
+<a href = "{% url 'open_fees_application' %}"> <button class = "btn btn-primary btn-lg"> Open fees application</button></a> </div>
 {% else %}
-<a href = "{% url 'send_fees_reminder' %}"> <button id = "send_fees_reminder"> send reminder for fee dates</button></a> 
+<center><a href = "{% url 'send_fees_reminder' %}"> <button class = "btn btn-info btn-lg" id = "send_fees_reminder"> Send reminder for Fee Date</button></a> </center>
+<br/>
 
-<a href = "{% url 'close_fees_application' %}"> <button id = "close_fees_application"> close fees application </button> </a>
+<center><a href = "{% url 'close_fees_application' %}"> <button class = "btn btn-lg btn-primary" id = "close_fees_application"> Close Fees Application </button> </a></center>
 {% if  hall_ticket_available == "false" %}
-<a href = "{% url 'hall_ticket_printout' %}"><button id = "hall_ticket_printout"> hall ticket printout </button> </a>
+<a href = "{% url 'hall_ticket_printout' %}"><button class = "btn btn-lg btn-primary" id = "hall_ticket_printout"> Hall ticket printout </button> </a>
 {% endif %}
-<a href = "{% url 'logout' %} "> <button id = "logout_button"> logout </button></a>
+
 {% endif %}
 {% if message %} 
     <h3> {{ message }} </h3>
 {% endif %}
+</div>
+
+{% endblock %}
     
     

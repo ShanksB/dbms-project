@@ -1,17 +1,29 @@
- <h1> {{ user }} Login</h1>
+ {% extends 'examApplication/base.html' %}
+ {% load crispy_forms_tags %}
+ {% block content %}
+
+
+ <center> <h1> {{ user | capfirst}} Login</h1></center> 
     <form method="POST" class="post-form">{% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="save btn btn-default">Save</button>
+        <center>
+            <button type="submit" class="btn btn-primary">
+                <span class = "glyphicon glyphicon-log-out" aria-hidden="true" ></span>Login
+            </button>
+        </center>
     </form>
 
     {% if error %} 
-    <div id = "error">
+    <div class = "alert alert-danger" >
             {{ error }}
      </div>
     {% endif %}
 
     {% if message %}
-    <div id = "message">
+    <div class = "alert alert-info">
     	{{ message }}
     </div>
     {% endif %}
+
+    {% endblock %}
+
